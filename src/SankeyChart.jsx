@@ -1,4 +1,3 @@
-// src/SankeyChart.jsx
 import React from "react";
 import Plot from "react-plotly.js";
 
@@ -17,27 +16,16 @@ const SankeyChart = () => {
   ];
 
   const nodeColors = [
-    "#ff6666", "#ffb366", "#f9e264", // Vendors
-    "#5dade2",                       // Create Session
-    "#7fb3d5",                       // Validate Address
-    "#9db6e4",                       // Create Order
-    "#b4a9e9",                       // Get Products
-    "#c39bd3",                       // Save Products
-    "#d7bde2",                       // Submit Order
-    "#9e9e9e", "#9e9e9e", "#9e9e9e" // Drop nodes (grey)
+    "#ff6666", "#ffb366", "#f9e264", 
+    "#5dade2",                       
+    "#7fb3d5",                       
+    "#9db6e4",                       
+    "#b4a9e9",                       
+    "#c39bd3",                       
+    "#d7bde2",                       
+    "#9e9e9e", "#9e9e9e", "#9e9e9e" 
   ];
 
-  // Node indices:
-  // 0-2: Vendors
-  // 3: Create Session
-  // 4: Validate Address
-  // 5: Create Order
-  // 6: Get Products
-  // 7: Save Products
-  // 8: Submit Order
-  // 9: Dropped @ Create Session
-  // 10: Dropped @ Validate Address
-  // 11: Dropped @ Create Order
 
   const links = {
     source: [
