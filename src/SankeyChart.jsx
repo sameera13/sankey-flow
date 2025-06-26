@@ -90,9 +90,7 @@ const SankeyChart = () => {
 
   const customdata = value.map(v => v / TOTAL_SESSIONS);
 
-  /* ────────────────────────────────
-     4. Render Plotly Sankey
-  ──────────────────────────────── */
+
   return (
     <Plot
       data={[
