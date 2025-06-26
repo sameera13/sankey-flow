@@ -2,6 +2,14 @@ import React from "react";
 import Plot from "react-plotly.js";
 
 const SankeyChart = () => {
+  /* ────────────────────────────────
+     1. Top-level numbers
+  ──────────────────────────────── */
+  const TOTAL_SESSIONS = 120_000;           // 3 vendors × 40 000 each
+
+  /* ────────────────────────────────
+     2. Node definitions
+  ──────────────────────────────── */
   const labels = [
     "Vendor A", "Vendor B", "Vendor C",
     "Create Session",
@@ -16,78 +24,85 @@ const SankeyChart = () => {
   ];
 
   const nodeColors = [
-    "#ff6666", "#ffb366", "#f9e264", 
-    "#5dade2",                       
-    "#7fb3d5",                       
-    "#9db6e4",                       
-    "#b4a9e9",                       
-    "#c39bd3",                       
-    "#d7bde2",                       
-    "#9e9e9e", "#9e9e9e", "#9e9e9e" 
+    "#ff6666", "#ffb366", "#f9e264",   // Vendors
+    "#5dade2",                         // Create Session
+    "#7fb3d5",                         // Validate Address
+    "#9db6e4",                         // Create Order
+    "#b4a9e9",                         // Get Products
+    "#c39bd3",                         // Save Products
+    "#d7bde2",                         // Submit Order
+    "#9e9e9e", "#9e9e9e", "#9e9e9e"    // Drop nodes (grey)
   ];
 
+  /* ────────────────────────────────
+     3. Link definitions
+     (values are example counts; change to real data)
+  ──────────────────────────────── */
+  const source = [
+    // Vendors → Create Session
+    0, 1, 2,
 
-  const links = {
-    source: [
-      // Vendors → Create Session
-      0, 1, 2,
+    // Create Session → Validate Address / drop
+    3, 3,
 
-      // Create Session → Validate Address or drop
-      3, 3,
+    // Validate Address → Create Order / drop
+    4, 4,
 
-      // Validate Address → Create Order or drop
-      4, 4,
+    // Create Order → Get Products / drop
+    5, 5,
 
-      // Create Order → Get Products or drop
-      5, 5,
+    // Get Products → Save Products
+    6,
 
-      // Get Products → Save Products only (no drop here)
-      6,
+    // Save Products → Submit Order
+    7
+  ];
 
-      // Save Products → Submit Order only (no drop here)
-      7,
-    ],
-    target: [
-      3, 3, 3,       // Vendors → Create Session
+  const target = [
+    3, 3, 3,       // Vendors → Create Session
 
-      4, 9,          // Create Session → Validate Address / drop
+    4, 9,          // Create Session → Validate / drop
 
-      5, 10,         // Validate Address → Create Order / drop
+    5, 10,         // Validate Address → Create Order / drop
 
-      6, 11,         // Create Order → Get Products / drop
+    6, 11,         // Create Order → Get Products / drop
 
-      7,             // Get Products → Save Products
+    7,             // Get Products → Save Products
 
-      8              // Save Products → Submit Order
-    ],
-    value: [
-      40000, 40000, 40000,  // Vendors → Create Session total 120k
+    8              // Save Products → Submit Order
+  ];
 
-      100000, 20000,        // Create Session → Validate / drop
+  /* Absolute session counts for each link   */
+  const value = [
+    40000, 40000, 40000,   // Vendors → Create Session  (120 000)
 
-      90000, 10000,         // Validate Address → Create Order / drop
+    100000, 20000,         // Create Session → Validate / drop
 
-      80000, 10000,         // Create Order → Get Products / drop
+    90000, 10000,          // Validate Address → Create Order / drop
 
-      70000,                // Get Products → Save Products (no drop)
+    80000, 10000,          // Create Order → Get Products / drop
 
-      65000                 // Save Products → Submit Order (no drop)
-    ],
-    color: [
-      "#ff6666", "#ffb366", "#f9e264",
+    70000,                 // Get Products → Save Products
 
-      "#5dade2", "#9e9e9e",
+    65000                  // Save Products → Submit Order
+  ];
 
-      "#7fb3d5", "#9e9e9e",
+  /* Grey for any link that ends in a drop node */
+  const linkColors = [
+    "#ff6666", "#ffb366", "#f9e264",
+    "#5dade2", "#9e9e9e",
+    "#7fb3d5", "#9e9e9e",
+    "#9db6e4", "#9e9e9e",
+    "#b4a9e9",
+    "#c39bd3"
+  ];
 
-      "#9db6e4", "#9e9e9e",
+  /* customdata → percentage of TOTAL_SESSIONS for each link */
+  const customdata = value.map(v => v / TOTAL_SESSIONS);
 
-      "#b4a9e9",
-
-      "#c39bd3"
-    ]
-  };
-
+  /* ────────────────────────────────
+     4. Render Plotly Sankey
+  ──────────────────────────────── */
   return (
     <Plot
       data={[
@@ -101,11 +116,25 @@ const SankeyChart = () => {
             label: labels,
             color: nodeColors
           },
-          link: links
+          link: {
+            source,
+            target,
+            value,
+            color: linkColors,
+            customdata,
+            /* Tooltip with percentage (1 decimal) */
+            hovertemplate:
+              "%{source.label} → %{target.label}<br>" +
+              "Sessions: %{value}<br>" +
+              "Share: %{customdata:.1%}<extra></extra>"
+          }
         }
       ]}
       layout={{
-        title: { text: "Session Flow with Drops at Selected Stages", font: { size: 16 } },
+        title: {
+          text: "Session Flow with Stage-Specific Drop-Offs (Counts & Percentages)",
+          font: { size: 16 }
+        },
         autosize: true,
         margin: { l: 0, r: 0, t: 40, b: 0 }
       }}
