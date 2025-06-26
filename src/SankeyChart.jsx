@@ -2,14 +2,8 @@ import React from "react";
 import Plot from "react-plotly.js";
 
 const SankeyChart = () => {
-  /* ────────────────────────────────
-     1. Top-level numbers
-  ──────────────────────────────── */
   const TOTAL_SESSIONS = 120_000;           // 3 vendors × 40 000 each
 
-  /* ────────────────────────────────
-     2. Node definitions
-  ──────────────────────────────── */
   const labels = [
     "Vendor A", "Vendor B", "Vendor C",
     "Create Session",
@@ -34,10 +28,6 @@ const SankeyChart = () => {
     "#9e9e9e", "#9e9e9e", "#9e9e9e"    // Drop nodes (grey)
   ];
 
-  /* ────────────────────────────────
-     3. Link definitions
-     (values are example counts; change to real data)
-  ──────────────────────────────── */
   const source = [
     // Vendors → Create Session
     0, 1, 2,
@@ -72,7 +62,7 @@ const SankeyChart = () => {
     8              // Save Products → Submit Order
   ];
 
-  /* Absolute session counts for each link   */
+
   const value = [
     40000, 40000, 40000,   // Vendors → Create Session  (120 000)
 
@@ -87,7 +77,7 @@ const SankeyChart = () => {
     65000                  // Save Products → Submit Order
   ];
 
-  /* Grey for any link that ends in a drop node */
+
   const linkColors = [
     "#ff6666", "#ffb366", "#f9e264",
     "#5dade2", "#9e9e9e",
@@ -97,7 +87,7 @@ const SankeyChart = () => {
     "#c39bd3"
   ];
 
-  /* customdata → percentage of TOTAL_SESSIONS for each link */
+
   const customdata = value.map(v => v / TOTAL_SESSIONS);
 
   /* ────────────────────────────────
